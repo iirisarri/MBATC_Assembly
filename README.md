@@ -28,7 +28,7 @@ We will use the following software (under `/home/demo-user/demosoftware/`)
 First of all, let's create a new folder for the practice in the Desktop. Then let's move the data folder there. Yes, the virtual machine is in German. We will also learn German!
 
 ```
-cd Schreibtisch/
+cd Escritorio/
 mkdir Assemblly
 mv ~/Downloads/MBATC_Assembly/Data Assembly
 cd Assembly
@@ -40,7 +40,7 @@ cd Assembly
 As you can see, the files in `Data` are compressed. Let's have a look at the uncompressed file, which is in the FASTQ format.
 
 ```
-cd /home/demo-user/Schreibtisch/Data
+cd /home/demo-user/Escritorio/Data
 ls
 gunzip ventricosus_1.fq.gz
 head ventricosus_1.fq		# Remember the head command?
@@ -59,7 +59,7 @@ gzip ventricosus_1.fq
 During a sequencing project, millions of reads are generated, which makes it impossible to check them one by one. Yet, it is important to know if the sequencing worked well and generated high quality sequences. To do so, we will use the FastQC tool:
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/
+cd /home/demo-user/Escritorio/Assemblly/
 mkdir 0-FastQC
 cd 0-FastQC
 mkdir RNA Mitochondrial
@@ -67,8 +67,8 @@ ls
 ```
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/0-FastQC
-/home/demo-user/demosoftware/FastQC/fastqc /home/demo-user/Schreibtisch/Data/Mitochondrial/* -o ./Mitochondrial/
+cd /home/demo-user/Escritorio/Assemblly/0-FastQC
+/home/demo-user/demosoftware/FastQC/fastqc /home/demo-user/Escritorio/Data/Mitochondrial/* -o ./Mitochondrial/
 ls */
 ```
 
@@ -85,14 +85,14 @@ It doesn't matter how well the sequencing worked, errors happen. We can use diff
 This time we will use Prinseq. For some reason, it cannot work with compressed files, so we first need to decompress fastq files.
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/
+cd /home/demo-user/Escritorio/Assemblly/
 mkdir 1-Prinseq
 cd 1-Prinseq
 mkdir RNA Mitochondrial
 
 # Mitochondrial 
 cd Mitochondrial
-cp /home/demo-user/Schreibtisch/Data/Mitochondrial/ventricosus*.gz ./
+cp /home/demo-user/Escritorio/Data/Mitochondrial/ventricosus*.gz ./
 gzip -d *
 perl /home/demo-user/demosoftware/prinseq-lite-0.2.4/prinseq-lite.pl -fastq ./ventricosus_1.fq -fastq2 ./ventricosus_2.fq -out_good ventricosus_good -out_bad ventricosus_bad -trim_qual_left 25 -trim_qual_right 25 -min_qual_mean 20 -min_len 75
 ```
@@ -115,7 +115,7 @@ Our assembly software will be SPAdes in two different versions, for genomic and 
 
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/
+cd /home/demo-user/Escritorio/Assemblly/
 mkdir 2-SPAdes
 cd 2-SPAdes
 mkdir Mitochondrial
@@ -158,14 +158,14 @@ Now let's repeat every step but with transcriptome-derived reads.
 
 Quality check with FastQC:
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/1-Prinseq/RNA/
-/home/demo-user/demosoftware/FastQC/fastqc /home/demo-user/Schreibtisch/Data/RNA/* -o ./RNA
+cd /home/demo-user/Escritorio/Assemblly/1-Prinseq/RNA/
+/home/demo-user/demosoftware/FastQC/fastqc /home/demo-user/Escritorio/Data/RNA/* -o ./RNA
 ```
 
 Filtering and trimming reads by quality with Prinseq:
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/1-Prinseq/
+cd /home/demo-user/Escritorio/Assemblly/1-Prinseq/
 cp /home/tecnicasmoleculares/Escritorio/Data/RNA/* ./
 gzip -d ventricosus*.gz
 perl /home/demo-user/demosoftware/prinseq-lite-0.2.4/prinseq-lite.pl -fastq ./ventricosus.al.1.fastq -fastq2 ./ventricosus.al.2.fastq -out_good ventricosus_good -out_bad ventricosus_bad -trim_qual_left 25 -trim_qual_right 25 -min_qual_mean 20 -min_len 75
@@ -185,7 +185,7 @@ rm ermineus*q
 Transcriptome assembly. In this case we use the SPAdes version adapted to transcriptome assembly `rnaspades`:
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/2-SPAdes/RNA
+cd /home/demo-user/Escritorio/Assemblly/2-SPAdes/RNA
 mkdir ermineus ventricosus
 cd ventricosus
 python /home/demo-user/demosoftware/SPAdes-4.0.0-Linux/bin/rnaspades.py -1 ../../../1-Prinseq/RNA/ventricosus_good_1.fastq.gz -2 ../../../1-Prinseq/RNA/ventricosus_good_2.fastq.gz -o ./
@@ -214,9 +214,9 @@ awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}'
 
 How many seuquences do you your three assemblies have? Why? 
 ```
-grep -c ">" /home/demo-user/Schreibtisch/Assemblly/2-SPAdes/Mitochonrial/ventricosus/contigs.fasta
-grep -c ">" /home/demo-user/Schreibtisch/Assemblly/2-SPAdes/RNA/ventricosus/transcripts.fasta
-grep -c ">" /home/demo-user/Schreibtisch/Assemblly/2-SPAdes/RNA/ermineus/transcripts.fasta
+grep -c ">" /home/demo-user/Escritorio/Assemblly/2-SPAdes/Mitochonrial/ventricosus/contigs.fasta
+grep -c ">" /home/demo-user/Escritorio/Assemblly/2-SPAdes/RNA/ventricosus/transcripts.fasta
+grep -c ">" /home/demo-user/Escritorio/Assemblly/2-SPAdes/RNA/ermineus/transcripts.fasta
 ```
 
 As you can see, there are striking differences between the genomes and transcriptomes, even if analysed with (kind of) the same tools.
@@ -231,7 +231,7 @@ Exactly, we can run BLAST with the command line. In this particular case, we wil
 Let's move back to the "Practice" folder and create a new Blast folder where to run this analysis:
 
 ```
-cd /home/demo-user/Schreibtisch/Assemblly/
+cd /home/demo-user/Escritorio/Assemblly/
 mkdir 3-Blast
 cd 3-Blast
 ```
