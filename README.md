@@ -139,7 +139,7 @@ Exactly, we can use the software BLAST. But I can also tell you that the first s
 Let's select the first sequence. A simple way of selecting the first sequence is to first convert this multi-line fasta into a single-line fasta file using "awk", and then print only the first two lines:
 
 ```
-awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < contigs.fasta outfile; mv outfile contigs.fasta
+awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < contigs.fasta > outfile; mv outfile contigs.fasta
 head -n 3 contigs.fasta > contig1.fa
 ```
 
